@@ -1,0 +1,7 @@
+fastapi==0.115.7
+uvicorn==0.34.0
+python_multipart==0.0.20
+deepface==0.0.93
+pillow==11.1.0
+tf_keras==2.18.0
+opencv-python-headless==4.9.0.80
