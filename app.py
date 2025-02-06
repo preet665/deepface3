@@ -1,9 +1,15 @@
+
 from fastapi import FastAPI, File, UploadFile
 from deepface import DeepFace
 from pydantic import BaseModel
 from PIL import Image
 import io
 import uvicorn
+import os
+
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  
 
 class EmotionAnalysisResponse(BaseModel):
     dominant_emotion: str
@@ -23,8 +29,14 @@ async def analyze_emotion(file: UploadFile = File(...)):
         temp_path = "temp_image.jpg"
         image.save(temp_path)
 
-        # Analyze emotion
-        result = DeepFace.analyze(temp_path, actions=['emotion'])
+        # Analyze emotion 
+        result = DeepFace.analyze(
+            temp_path, 
+            actions=['emotion'], 
+            detector_backend='opencv',
+            enforce_detection=False  
+        )
+
         emotion_data = result[0]
         dominant_emotion = emotion_data['dominant_emotion']
         emotion_scores = emotion_data['emotion']
@@ -43,5 +55,4 @@ async def analyze_emotion(file: UploadFile = File(...)):
         return {"error": str(e)}
 
 if __name__ == "__main__":
-    print('abc')
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=9000)
